@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>香港兩天 10/9–10/10</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+:root{--bg:#E6E2DC;--surface:#F2EFEA;--ink:#403B37;--muted:#7C756E;--rule:#D3CCC3;--friend:#D2B47C;--rose:#C9A7A2;--sage:#A3B09B;--blue:#93A2B1}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"PingFang TC","Noto Sans TC","Microsoft JhengHei","Heiti TC",sans-serif;font-size:16px;line-height:1.7}
+.serif,h1,h2,h3{font-family:"Songti TC","Noto Serif TC","Source Han Serif TC","PMingLiU",serif}
+a{color:var(--ink);text-underline-offset:3px}
+a:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+.hero{position:relative;height:56vh;min-height:320px;max-height:560px;overflow:hidden;background:linear-gradient(160deg,#93A2B1,#AA9AA9)}
+.hero img{width:100%;height:100%;object-fit:cover;filter:saturate(.55) contrast(.92) brightness(.95)}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(230,226,220,0) 45%,var(--bg) 100%)}
+.wrap{max-width:720px;margin:0 auto;padding:0 20px}
+.intro{margin-top:-72px;position:relative;z-index:1}
+.intro h1{margin:0;font-size:clamp(46px,13vw,84px);line-height:1.05;font-weight:600;letter-spacing:.06em}
+.intro .dates{margin:6px 0 0;font-size:17px;color:var(--muted);letter-spacing:.08em}
+.facts{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:16px;overflow:hidden;margin:24px 0 0}
+.facts div{background:var(--surface);padding:12px 14px}
+.facts b{display:block;font-size:17px;font-variant-numeric:tabular-nums}
+.facts span{font-size:13px;color:var(--muted)}
+.jump{display:flex;gap:10px;margin:22px 0 0}
+.jump a{flex:1;text-decoration:none;background:var(--ink);color:var(--surface);padding:12px 14px;border-radius:14px}
+.jump a:last-child{background:#A58B7B}
+.jump b{display:block;font-size:19px}
+.jump span{font-size:13px;opacity:.85}
+section.day{padding-top:44px}
+.dayhead{display:flex;align-items:baseline;gap:14px;border-bottom:1px solid var(--rule);padding-bottom:10px}
+.dayhead h2{margin:0;font-size:34px;font-weight:600;letter-spacing:.04em}
+.dayhead span{color:var(--muted)}
+.summary{margin:12px 0 0;color:var(--muted);max-width:60ch}
+figure.mapcard{margin:20px 0 0;background:var(--surface);border-radius:22px;padding:10px;border:1px solid var(--rule)}
+figure.mapcard svg.map{display:block;width:100%;height:auto;border-radius:14px}
+figure.mapcard figcaption{font-size:13px;color:var(--muted);padding:8px 6px 2px}
+svg .area{font:600 15px "Songti TC","Noto Serif TC",serif;fill:#7C756E;letter-spacing:.12em}
+svg .water{font:italic 14px "Songti TC","Noto Serif TC",serif;fill:#7E9399;letter-spacing:.3em}
+svg .stn{font:12px "PingFang TC","Noto Sans TC",sans-serif;fill:#403B37}
+svg .small{font:12px "PingFang TC","Noto Sans TC",sans-serif;fill:#7C756E}
+svg .note{font:12px "PingFang TC","Noto Sans TC",sans-serif;fill:#403B37}
+svg .plabel{font:600 13px "PingFang TC","Noto Sans TC",sans-serif;fill:#403B37;paint-order:stroke;stroke:#ECE8E2;stroke-width:4px}
+svg .pin{font:700 13px "PingFang TC","Noto Sans TC",sans-serif;fill:#403B37}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--muted);padding:6px 6px 2px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+ol.tl{list-style:none;margin:22px 0 0;padding:0}
+ol.tl li{display:grid;grid-template-columns:44px 1fr}
+.rail{position:relative}
+li.stop .rail::before{content:"";position:absolute;left:21px;top:0;bottom:0;width:2px;background:var(--rule)}
+ol.tl li.stop:first-child .rail::before{top:24px}
+ol.tl li.stop:last-child .rail::before{height:24px}
+.num{position:absolute;left:8px;top:10px;width:28px;height:28px;border-radius:50%;background:var(--surface);border:2px solid var(--ink);display:grid;place-items:center;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
+li.friend .num{background:var(--friend)}
+.body{display:grid;grid-template-columns:1fr 92px;gap:14px;align-items:start;background:var(--surface);border:1px solid var(--rule);border-radius:18px;padding:14px 14px 14px 16px;margin:6px 0}
+li.friend .body{border-color:var(--friend);box-shadow:inset 4px 0 0 var(--friend)}
+.time{margin:0;font-size:14px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums;letter-spacing:.04em}
+.body h3{margin:2px 0 0;font-size:21px;line-height:1.35;font-weight:600}
+.desc{margin:6px 0 0;font-size:15px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chip{font-size:12.5px;padding:2px 10px;border-radius:999px;background:var(--bg);color:var(--ink)}
+.chip.friend{background:var(--friend);font-weight:700}
+.chip.book{background:#C9A7A2;font-weight:700}
+.link{margin:10px 0 0;font-size:14px}
+.thumb{width:92px;height:92px;border-radius:16px;background:color-mix(in srgb,var(--tint) 45%,#F2EFEA);display:grid;place-items:center;overflow:hidden}
+.thumb svg{width:46px;height:46px}
+.thumb{position:relative}.thumb.photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(.7)}
+li.leg .rail .bar{position:absolute;left:18px;top:-6px;bottom:-6px;width:8px;border-radius:4px;background:var(--c)}
+li.leg .rail .bar.walk{left:20px;width:4px;background:repeating-linear-gradient(180deg,var(--c) 0 3px,transparent 3px 8px)}
+li.leg p{margin:0;padding:8px 0 8px 4px;font-size:14px;color:var(--ink);line-height:1.5}
+.mode{display:inline-block;font-size:12px;font-weight:700;color:#fff;background:var(--c);border-radius:6px;padding:1px 8px;margin-right:8px}
+.notes{padding-top:48px}
+.notes h2{font-size:26px;font-weight:600;margin:0 0 10px;letter-spacing:.04em}
+.checklist{list-style:none;margin:0;padding:0;background:var(--surface);border:1px solid var(--rule);border-radius:18px}
+.checklist li{padding:12px 16px 12px 44px;position:relative;border-top:1px solid var(--rule)}
+.checklist li:first-child{border-top:0}
+.checklist li::before{content:"";position:absolute;left:16px;top:17px;width:14px;height:14px;border:2px solid #A3B09B;border-radius:4px}
+.pocket{display:grid;grid-template-columns:1fr;gap:10px}
+.pocket div{background:var(--surface);border:1px solid var(--rule);border-radius:16px;padding:12px 16px}
+.pocket b{display:block;font-family:"Songti TC","Noto Serif TC",serif;font-size:17px;font-weight:600}
+.pocket span{font-size:14px;color:var(--muted)}
+footer{font-size:12px;color:var(--muted);padding:40px 0 56px}
+footer p{margin:4px 0}
+@media (min-width:640px){.pocket{grid-template-columns:1fr 1fr}.facts{grid-template-columns:repeat(4,1fr)}.body{grid-template-columns:1fr 120px}.thumb{width:120px;height:120px}}
+@media (max-width:380px){.body{grid-template-columns:1fr 72px}.thumb{width:72px;height:72px}}
+
+.mapbox{position:relative;height:min(64vh,520px);border-radius:14px;overflow:hidden;background:#ECE8E2}
+.mapfail{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:24px;margin:0;color:var(--muted);font-size:15px}
+.leaflet-container{font-family:"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;background:#ECE8E2}
+.leaflet-tile-pane{filter:sepia(.28) saturate(.7) hue-rotate(-8deg) contrast(.94) brightness(1.02)}
+.zones{display:flex;flex-wrap:wrap;gap:8px;padding:10px 4px 2px}
+.zones button{font:inherit;font-size:14px;padding:5px 14px;border-radius:999px;border:1px solid var(--rule);background:var(--bg);color:var(--ink);cursor:pointer}
+.zones button[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.zones button:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.leaflet-tooltip.stn{background:transparent;border:0;box-shadow:none;padding:0 4px;font-size:12px;font-weight:700;color:#403B37;text-shadow:0 0 3px #fff,0 0 3px #fff,0 0 3px #fff}
+.leaflet-tooltip.stn::before{display:none}
+.leaflet-tooltip.dur{background:#fff;border:1.5px solid var(--c,#403B37);color:#403B37;border-radius:999px;padding:0 7px;font-size:11.5px;font-weight:700;box-shadow:0 1px 3px rgba(64,59,55,.2);line-height:1.6}
+.leaflet-tooltip.dur::before{display:none}
+.durdemo{display:inline-block;background:#fff;border:1.5px solid #BF8984;border-radius:999px;padding:0 7px;font-size:11.5px;font-weight:700;color:#403B37;margin-right:4px}
+.mpin{width:28px;height:28px;border-radius:50%;background:#F2EFEA;border:2.5px solid #403B37;display:grid;place-items:center;font-size:12.5px;font-weight:800;color:#403B37;box-shadow:0 1px 4px rgba(64,59,55,.35)}
+.mpin.wide{width:auto;min-width:28px;padding:0 6px;border-radius:14px}
+.mpin.f{background:#D2B47C}
+.leaflet-popup-content{font-size:14px;line-height:1.5;margin:10px 14px}
+.leaflet-popup-content b{font-family:"Songti TC","Noto Serif TC",serif;font-size:15px}
+li.leg p{display:flex;flex-wrap:wrap;align-items:center;gap:4px 0}
+.mins{margin-left:auto;padding-left:10px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.tnote{font-size:12px;color:var(--muted);border:1px dashed var(--muted);border-radius:6px;padding:0 6px;margin-left:6px}
+.checks{display:grid;gap:10px}
+.checks div{background:var(--surface);border:1px solid var(--rule);border-radius:16px;padding:12px 16px}
+.checks b{display:block}
+.checks span{font-size:14px;color:var(--muted)}
+.checks i{font-style:normal;font-size:12px;font-weight:700;border-radius:6px;padding:1px 8px;margin-right:6px;background:#A3B09B;color:#fff}
+.checks i.warn{background:#C9A7A2}
+</style>
+</head>
+<body>
+<div class="hero"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Hong_Kong_Skyline_Restitch_-_Dec_2007.jpg?width=1800" alt="從太平山俯瞰維多利亞港夜景" onerror="this.remove()"></div>
+<div class="wrap">
+  <header class="intro">
+    <h1>香港兩天</h1>
+    <p class="dates serif">2026.10.9　—　10.10</p>
+    <div class="facts">
+      <div><b>10/9 02:00</b><span>抵達香港</span></div>
+      <div><b>10/10 23:25</b><span>起飛回台</span></div>
+      <div><b>Kimpton</b><span>尖沙咀住一晚</span></div>
+      <div><b>全程港鐵</b><span>帶八達通或手機感應</span></div>
+    </div>
+    <nav class="jump" aria-label="跳到某一天">
+      <a href="#d1"><b>10/9 五</b><span>中環、太平山、銅鑼灣</span></a>
+      <a href="#d2"><b>10/10 六</b><span>佐敦、油麻地、夜景巴士</span></a>
+    </nav>
+  </header>
+
+  <section class="day" id="d1">
+    <div class="dayhead"><h2>10/9</h2><span>星期五</span></div>
+    <p class="summary">從機場移到尖沙咀，下午在中環吃喝拍照，傍晚上太平山看夜景，晚上銅鑼灣逛街吃火鍋，最後在蘭桂坊和朋友會合。</p>
+    <figure class="mapcard"><div class="mapbox" id="map-d1"><p class="mapfail">用瀏覽器開啟網址後，這裡會顯示真實地圖和港鐵路線。</p></div><div class="zones"><button type="button" data-map="d1" data-zone="0">全日</button><button type="button" data-map="d1" data-zone="1">中環</button><button type="button" data-map="d1" data-zone="2">太平山</button><button type="button" data-map="d1" data-zone="3">銅鑼灣</button><button type="button" data-map="d1" data-zone="4">含機場</button></div><div class="legend"><span><svg width="26" height="8"><path d="M2 4H24" stroke="#83A39F" stroke-width="5" stroke-linecap="round"/></svg>機場快綫</span><span><svg width="26" height="8"><path d="M2 4H24" stroke="#A58B7B" stroke-width="5" stroke-linecap="round"/></svg>屯馬綫</span><span><svg width="26" height="8"><path d="M2 4H24" stroke="#BF8984" stroke-width="5" stroke-linecap="round"/></svg>荃灣綫</span><span><svg width="26" height="8"><path d="M2 4H24" stroke="#8399AE" stroke-width="5" stroke-linecap="round"/></svg>港島綫</span><span><svg width="26" height="8"><path d="M2 4H24" stroke="#97AA8B" stroke-width="5" stroke-linecap="round"/></svg>山頂纜車</span><span><svg width="26" height="8"><path d="M2 4H24" stroke="#9C948A" stroke-width="3" stroke-dasharray="1 5" stroke-linecap="round"/></svg>步行</span><span><svg width="18" height="18"><circle cx="9" cy="9" r="7" fill="#D2B47C" stroke="#403B37" stroke-width="2"/></svg>和朋友一起</span><span><span class="durdemo">7 分</span>移動時間</span></div><figcaption>淡色細線是港鐵路線，粗線是當天實際搭乘的區段。地圖放大後會顯示步行時間。</figcaption></figure>
+    <ol class="tl"><li class="stop"><div class="rail"><span class="num">1</span></div><div class="body"><div class="txt"><p class="time">02:00</p><h3>落地，入住機場萬豪</h3><p class="desc">搭酒店接駁車到飯店，先補眠。</p><p class=link><a href="https://www.google.com/maps/search/?api=1&query=Hong%20Kong%20SkyCity%20Marriott%20Hotel" target="_blank" rel="noopener">Google 地圖看實景與路線</a></p></div><div class="thumb" style="--tint:#93A2B1" data-wiki="en:Hong Kong SkyCity Marriott Hotel|zh:亞洲國際博覽館"><svg viewBox="0 0 48 48" aria-hidden="true"><g fill="none" stroke="#403B37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 28l14-4 8-14c1-2 4-2 4 1l-3 12 12-3 3-5h3l-2 9 2 9h-3l-3-5-12-3 3 12c0 3-3 3-4 1l-8-14-14-4z"/></g></svg></div></div></li>
+<li class="stop"><div class="rail"><span class="num">2</span></div><div class="body"><div class="txt"><p class="time">10:00</p><h3>飯店早餐</h3><p class="desc">在萬豪吃早餐，11:30 前退房。</p></div><div class="thumb" style="--tint:#CFC1AA"><svg viewBox="0 0 48 48" aria-hidden="true"><g fill="none" stroke="#403B37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 41V9h24v32M8 41h32M18 15h4M26 15h4M18 22h4M26 22h4M18 29h4M26 29h4M21 41v-6h6v6"/></g></svg></div></div></li>
+<li class="leg"><div class="rail"><span class="bar walk" style="--c:#9C948A"></span></div><p><span class="mode" style="--c:#9C948A">步行</span>萬豪走到博覽館站<span class="mins">5 分</span></p></li>
+<li class="leg"><div class="rail"><span class="bar" style="--c:#83A39F"></span></div><p><span class="mode" style="--c:#83A39F">機場快綫</span>博覽館 → 九龍，途經機場、青衣，不用換車<span class="mins">26 分</span></p></li>
+<li class="leg"><div class="rail"><span class="bar walk" style="--c:#9C948A"></span></div><p><span class="mode" style="--c:#9C948A">步行</span>九龍站出站，走到柯士甸站<span class="tnote">站外轉乘</span><span class="mins">8 分</span></p></li>
+<li class="leg"><div class="rail"><span class="bar" style="--c:#A58B7B"></span></div><p><span class="mode" style="--c:#A58B7B">屯馬綫</span>柯士甸 → 尖東，坐 1 站<span class="mins">2 分</span></p></li>
+<li class="leg"><div class="rail"><span class="bar walk" style="--c:#9C948A"></span></div><p><span class="mode" style="--c:#9C948A">步行</span>尖東站走到飯店<span class="mins">3 分</span></p></li>
+<li class="stop"><div class="rail"><span class="num">3</span></div><div class="body"><div class="txt"><p class="time">12:45</p><h3>Kimpton 尖沙咀，寄放行李</h3><p class="desc">就在尖東站旁邊，先寄放行李再出門。</p><p class=link><a href="https://www.google.com/maps/search/?api=1&query=Kimpton%20Tsim%20Sha%20Tsui%20Hong%20Kong" target="_blank" rel="noopener">Google 地圖看實景與路線</a></p></div><div class="thumb" style="--tint:#CFC1AA" data-wiki="zh:尖沙咀東部|en:Tsim Sha Tsui East"><svg viewBox="0 0 48 48" aria-hidden="true"><g fill="none" stroke="#403B37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 41V9h24v32M8 41h32M18 15h4M26 15h4M18 22h4M26 22h4M18 29h4M26 29h4M21 41v-6h6v6"/></g></svg></div></div></li>
+<li class="leg"><div class="rail"><span class="bar walk" style="--c:#9C948A"></span></div><p><span class="mode" style="--c:#9C948A">步行</span>經地下通道走到尖沙咀站<span class="mins">5 分</span></p></li>
+<li class="leg"><div class="rail"><span class="bar" style="--c:#BF8984"></span></div><p><span class="mode" style="--c:#BF8984">荃灣綫</span>尖沙咀 → 中環，經金鐘，不用換車<span class="mins">5 分</span></p></li>
+<li class="leg"><div class="rail"><span class="bar walk" style="--c:#9C948A"></span></div><p><span class="mode" style="--c:#9C948A">步行</span>中環站走到威靈頓街<span class="mins">6 分</span></p></li>
+<li class="stop"><div class="rail"><span class="num">4</span></div><div class="body"><div class="txt"><p class="time">13:15</p><h3>沾仔記</h3><p class="desc">威靈頓街的雲吞麵名店，大蝦雲吞配辣椒油。上菜快，吃完剛好去珠寶店。</p><div class=chips><span class="chip ">麵食</span></div><p class=link><a href="https://www.google.com/maps/search/?api=1&query=Tsim%20Chai%20Kee%20Noodle%2098%20Wellington%20Street" target="_blank" rel="noopener">Google 地圖看實景與路線</a></p></div><div class="thumb photo" style="--tint:#C9A7A2"><svg viewBox="0 0 48 48" aria-hidden="true"><g fill="none" stroke="#403B37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 24h34a17 17 0 0 1-34 0zM28 7l9 16M33 6l7 16M17 41h14"/></g></svg><img src="https://commons.wikimedia.org/wiki/Special:FilePath/CantoneseWontonnoodle.jpg?width=900" alt="" loading="lazy" onerror="this.remove()"></div></div></li>
+<li class="stop"><div class="rail"><span class="num">5</span></div><div class="body"><div class="txt"><p class="time">14:00</p><h3>珠寶店</h3><p class="desc">中環，走路時間依店家位置而定。</p></div><div class="thumb" style="--tint:#AA9AA9"><svg viewBox="0 0 48 48" aria-hidden="true"><g fill="none" stroke="#403B37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-8h18l6 8-15 21zM9 18h30M15 10l9 29 9-29M20 18l4-8 4 8"/></g></svg></div></div></li>
+<li class="leg"><div class="rail"><span class="bar walk" style="--c:#9C948A"></span></div><p><span class="mode" style="--c:#9C948A">步行</span>走到結志街<span class="mins">依店家</span></p></li>
+<li class="stop"><div class="rail"><span class="num">6</span></div><div class="body"><div class="txt"><p class="time">15:15</p><h3>蘭芳園</h3><p class="desc">結志街的老茶餐廳，喝一杯絲襪奶茶歇腳。店小，要快點快吃，週日公休。</p><div class=chips><span class="chip ">茶餐廳</span></div><p class=link><a href="https://www.google.com/maps/search/?api=1&query=Lan%20Fong%20Yuen%20Gage%20Street%20Central" target="_blank" rel="noopener">Google 地圖看實景與路線</a></p></div><div class="thumb" style="--tint:#CFC1AA" data-wiki="zh:蘭芳園|zh:港式奶茶"><svg viewBox="0 0 48 48" aria-hidden="true"><g fill="none" stroke="#403B37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 18h22v12a9 9 0 0 1-9 9h-4a9 9 0 0 1-9-9zM33 21h3a4.5 4.5 0 0 1 0 9h-3M17 7c-2 3 2 4 0 7M24 7c-2 3 2 4 0 7"/></g></svg></div></div></li>
+<li class="leg"><div class="rail"><span class="bar walk" style="--c:#9C948A"></span></div><p><span class="mode" style="--c:#9C948A">步行</span>嘉咸街上坡看壁畫，再轉進士丹頓街<span class="mins">3 分</span></p></li>
+<li class="stop"><div class="rail"><span class="num">7</span></div><div class="body"><div class="txt"><p class="time">15:45</p><h3>嘉咸街壁畫，士丹頓街買麵包</h3><p class="desc">壁畫就在蘭芳園旁的上坡路。士丹頓街上 Vission Bakery 和 Bakehouse 中環店相鄰，外帶丹麥酥和蛋撻。</p><div class=chips><span class="chip ">朋友推薦</span><span class="chip ">蛋撻</span></div><p class=link><a href="https://www.google.com/maps/search/?api=1&query=Vission%20Bakery%20Staunton%20Street" target="_blank" rel="noopener">Google 地圖看實景與路線</a></p></div><div class="thumb" style="--tint:#CFC1AA" data-wiki="zh:嘉咸街|zh:蛋撻"><svg viewBox="0 0 48 48" aria-hidden="true"><g fill="none" stroke="#403B37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 25h34l-4 11H11zM9 25c3-6 27-6 30 0M14 36l-1-11M20 36v-11M28 36v-11M34 36l1-11"/></g></svg></div></div></li>
+<li class="leg"><div class="rail"><span class="bar walk" style="--c:#9C948A"></span></div><p><span class="mode" style="--c:#9C948A">步行</span>走到大館<span class="mins">4 分</span></p></li>
+<li class="stop"><div class="rail"><span class="num">8</span></div><div class="body"><div class="txt"><p class="time">16:05</p><h3>大館</h3><p class="desc">舊中區警署和監獄改建的古蹟園區，免費入場。可以坐在操場吃剛買的麵包。</p><p class=link><a href="https://www.google.com/maps/search/?api=1&query=Tai%20Kwun%20Hong%20Kong" target="_blank" rel="noopener">Google 地圖看實景與路線</a></p></div><div class="thumb" style="--tint:#A3B09B" data-wiki="zh:大館|en:Tai Kwun"><svg viewBox="0 0 48 48" aria-hidden="true"><g fill="none" stroke="#403B37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18l17-10 17 10zM10 18v18M18 18v18M30 18v18M38 18v18M6 40h36M8 36h32"/></g></svg></div></div></li>
+<li class="leg"><div class="rail"><span class="bar walk" style="--c:#9C948A"></span></div><p><span class="mode" style="--c:#9C948A">步行</span>走到花園道纜車總站，一路上坡<span class="mins">12 分</span></p></li>
+<li class="leg"><div class="rail"><span class="bar" style="--c:#97AA8B"></span></div><p><span class="mode" style="--c:#97AA8B">山頂纜車</span>纜車上山，坐右邊看景<span class="mins">7 分</span></p></li>
+<li class="stop"><div class="rail"><span class="num">9</span></div><div class="body"><div class="txt"><p class="time">17:00</p><h3>杜莎夫人蠟像館</h3><p class="desc">在凌霄閣裡面，逛 1 小時左右。凌霄閣 P1 層有泰昌餅家，可以順便買曲奇皮蛋撻。</p><div class=chips><span class="chip ">蛋撻</span></div><p class=link><a href="https://www.google.com/maps/search/?api=1&query=Madame%20Tussauds%20Hong%20Kong" target="_blank" rel="noopener">Google 地圖看實景與路線</a></p></div><div class="thumb photo" style="--tint:#A3B09B"><svg viewBox="0 0 48 48" aria-hidden="true"><g fill="none" stroke="#403B37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 39l13-19 8 10 6-8 13 17zM13 14a4 4 0 1 0 0-.1"/></g></svg><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Hongkong_Peak_Tram.jpg?width=900" alt="" loading="lazy" onerror="this.remove()"></div></div></li>
+<li class="stop"><div class="rail"><span class="num">10</span></div><div class="body"><div class="txt"><p class="time">17:45</p><h3>凌霄閣摩天台 428</h3><p class="desc">同一棟樓的頂樓。日落約 18:00，從黃昏看到全黑，18:40 前下山。風大，帶件薄外套。</p></div><div class="thumb photo" style="--tint:#A3B09B"><svg viewBox="0 0 48 48" aria-hidden="true"><g fill="none" stroke="#403B37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 39l13-19 8 10 6-8 13 17zM13 14a4 4 0 1 0 0-.1"/></g></svg><img src="https://commons.wikimedia.org/wiki/Special:FilePath/13-08-09-peak-by-RalfR-04.jpg?width=900" alt="" loading="lazy" onerror="this.remove()"></div></div></li>
+<li class="leg"><div class="rail"><span class="bar" style="--c:#97AA8B"></span></div><p><span class="mode" style="--c:#97AA8B">山頂纜車</span>纜車下山<span class="mins">7 分</span></p></li>
+<li class="leg"><div class="rail"><span class="bar walk" style="--c:#9C948A"></span></div><p><span class="mode" style="--c:#9C948A">步行</span>纜車站走回中環站<span class="mins">10 分</span></p></li>
+<li class="leg"><div class="rail"><span class="bar" style="--c:#8399AE"></span></div><p><span class="mode" style="--c:#8399AE">港島綫</span>中環 → 銅鑼灣，經金鐘、灣仔，不用換車<span class="mins">7 分</span></p></li>
+<li class="leg"><div class="rail"><span class="bar walk" style="--c:#9C948A"></span></div><p><span class="mode" style="--c:#9C948A">步行</span>銅鑼灣站走到霎東街<span class="mins">5 分</span></p></li>
+<li class="stop"><div class="rail"><span class="num">11</span></div><div class="body"><div class="txt"><p class="time">19:15</p><h3>Brandy Melville 銅鑼灣店</h3><p class="desc">霎東街的 Oliv 大樓，一共三層樓，貨比較齊，也有香港限定款。營業到 21:00。</p><div class=chips><span class="chip ">逛街</span></div><p class=link><a href="https://www.google.com/maps/search/?api=1&query=Brandy%20Melville%20Causeway%20Bay%2015%20Sharp%20Street%20East" target="_blank" rel="noopener">Google 地圖看實景與路線</a></p></div><div class="thumb" style="--tint:#C9A7A2" data-wiki="zh:銅鑼灣|en:Causeway Bay"><svg viewBox="0 0 48 48" aria-hidden="true"><g fill="none" stroke="#403B37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 16h26l-2 25H13zM18 16a6 6 0 0 1 12 0"/></g></svg></div></div></li>
+<li class="leg"><div class="rail"><span class="bar walk" style="--c:#9C948A"></span></div><p><span class="mode" style="--c:#9C948A">步行</span>走到白沙道<span class="mins">5 分</span></p></li>
+<li class="stop"><div class="rail"><span class="num">12</span></div><div class="body"><div class="txt"><p class="time">19:50</p><h3>白沙道</h3><p class="desc">Leica 旗艦店有五層樓高的徠卡主題幕牆，旁邊二樓的 SHOWA 是底片相機小店。這個時間店家可能快打烊，以拍外觀為主。</p><p class=link><a href="https://www.google.com/maps/search/?api=1&query=Leica%20Store%20Causeway%20Bay%20Pak%20Sha%20Road" target="_blank" rel="noopener">Google 地圖看實景與路線</a></p></div><div class="thumb" style="--tint:#93A2B1" data-wiki="en:Leica Camera|zh:徠卡"><svg viewBox="0 0 48 48" aria-hidden="true"><g fill="none" stroke="#403B37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 16h9l3-5h10l3 5h9v22H7zM24 33a6 6 0 1 0 0-12 6 6 0 0 0 0 12z"/></g></svg></div></div></li>
+<li class="leg"><div class="rail"><span class="bar walk" style="--c:#9C948A"></span></div><p><span class="mode" style="--c:#9C948A">步行</span>走到謝斐道<span class="mins">7 分</span></p></li>
+<li class="stop"><div class="rail"><span class="num">13</span></div><div class="body"><div class="txt"><p class="time">20:10</p><h3>鵝頸橋四季火鍋</h3><p class="desc">朋友大推胡椒豬肚湯底，食材新鮮。週五晚上一定要訂位。</p><div class=chips><span class="chip ">朋友推薦</span><span class="chip book">要訂位</span></div><p class=link><a href="https://www.google.com/maps/search/?api=1&query=%E9%B5%9D%E9%A0%B8%E6%A9%8B%E5%9B%9B%E5%AD%A3%E7%81%AB%E9%8D%8B%20%E8%AC%9D%E6%96%90%E9%81%93" target="_blank" rel="noopener">Google 地圖看實景與路線</a></p></div><div class="thumb" style="--tint:#C9A7A2" data-wiki="zh:火鍋|en:Hot pot"><svg viewBox="0 0 48 48" aria-hidden="true"><g fill="none" stroke="#403B37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 22h32v5a13 13 0 0 1-13 13h-6A13 13 0 0 1 8 27zM4 24h4M40 24h4M24 22v18M17 8c-2 3 2 4 0 7M24 8c-2 3 2 4 0 7M31 8c-2 3 2 4 0 7"/></g></svg></div></div></li>
+<li class="leg"><div class="rail"><span class="bar walk" style="--c:#9C948A"></span></div><p><span class="mode" style="--c:#9C948A">步行</span>走回銅鑼灣站<span class="mins">5 分</span></p></li>
+<li class="leg"><div class="rail"><span class="bar" style="--c:#8399AE"></span></div><p><span class="mode" style="--c:#8399AE">港島綫</span>銅鑼灣 → 中環<span class="mins">7 分</span></p></li>
+<li class="leg"><div class="rail"><span class="bar walk" style="--c:#9C948A"></span></div><p><span class="mode" style="--c:#9C948A">步行</span>中環站走到蘭桂坊<span class="mins">5 分</span></p></li>
+<li class="stop friend"><div class="rail"><span class="num">14</span></div><div class="body"><div class="txt"><p class="time">21:30</p><h3>蘭桂坊</h3><p class="desc">和朋友會合，週五晚上最熱鬧。</p><div class=chips><span class="chip friend">和朋友一起</span></div><p class=link><a href="https://www.google.com/maps/search/?api=1&query=Lan%20Kwai%20Fong%20Hong%20Kong" target="_blank" rel="noopener">Google 地圖看實景與路線</a></p></div><div class="thumb" style="--tint:#AA9AA9" data-wiki="zh:蘭桂坊|en:Lan Kwai Fong"><svg viewBox="0 0 48 48" aria-hidden="true"><g fill="none" stroke="#403B37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 8h20l-3 15a7 7 0 0 1-14 0zM24 30v10M17 40h14M15 15h18"/></g></svg></div></div></li>
+<li class="leg"><div class="rail"><span class="bar walk" style="--c:#9C948A"></span></div><p><span class="mode" style="--c:#9C948A">步行</span>走回中環站<span class="mins">5 分</span></p></li>
+<li class="leg"><div class="rail"><span class="bar" style="--c:#BF8984"></span></div><p><span class="mode" style="--c:#BF8984">荃灣綫</span>中環 → 尖沙咀，末班車約 0:30～1:00<span class="mins">5 分</span></p></li>
+<li class="leg"><div class="rail"><span class="bar walk" style="--c:#9C948A"></span></div><p><span class="mode" style="--c:#9C948A">步行</span>經地下通道走回飯店<span class="mins">5 分</span></p></li>
+<li class="stop"><div class="rail"><span class="num">15</span></div><div class="body"><div class="txt"><p class="time">深夜</p><h3>回 Kimpton 休息</h3></div><div class="thumb" style="--tint:#93A2B1"><svg viewBox="0 0 48 48" aria-hidden="true"><g fill="none" stroke="#403B37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M30 8a16 16 0 1 0 10 26A13 13 0 0 1 30 8z"/></g></svg></div></div></li></ol>
+  </section>
+
+  <section class="day" id="d2">
+    <div class="dayhead"><h2>10/10</h2><span>星期六</span></div>
+    <p class="summary">中午在中環吃陸羽，下午和朋友在佐敦、油麻地吃喝散步，傍晚吃蓮香樓、搭夜景巴士，再去機場。</p>
+    <figure class="mapcard"><div class="mapbox" id="map-d2"><p class="mapfail">用瀏覽器開啟網址後，這裡會顯示真實地圖和港鐵路線。</p></div><div class="zones"><button type="button" data-map="d2" data-zone="0">全日</button><button type="button" data-map="d2" data-zone="1">中環</button><button type="button" data-map="d2" data-zone="2">佐敦油麻地</button><button type="button" data-map="d2" data-zone="3">含機場</button></div><div class="legend"><span><svg width="26" height="8"><path d="M2 4H24" stroke="#BF8984" stroke-width="5" stroke-linecap="round"/></svg>荃灣綫</span><span><svg width="26" height="8"><path d="M2 4H24" stroke="#A58B7B" stroke-width="5" stroke-linecap="round"/></svg>屯馬綫</span><span><svg width="26" height="8"><path d="M2 4H24" stroke="#83A39F" stroke-width="5" stroke-linecap="round"/></svg>機場快綫</span><span><svg width="26" height="8"><path d="M2 4H24" stroke="#B095A9" stroke-width="4" stroke-dasharray="7 4"/></svg>夜景巴士</span><span><svg width="26" height="8"><path d="M2 4H24" stroke="#9C948A" stroke-width="3" stroke-dasharray="1 5" stroke-linecap="round"/></svg>步行</span><span><svg width="18" height="18"><circle cx="9" cy="9" r="7" fill="#D2B47C" stroke="#403B37" stroke-width="2"/></svg>和朋友一起</span><span><span class="durdemo">7 分</span>移動時間</span></div><figcaption>夜景巴士路線依票券列出的途經點繪製，實際行車路線可能不同。</figcaption></figure>
+    <ol class="tl"><li class="stop"><div class="rail"><span class="num">1</span></div><div class="body"><div class="txt"><p class="time">早上</p><h3>飯店早餐</h3><p class="desc">在 Kimpton 吃早餐，慢慢來。</p><p class=link><a href="https://www.google.com/maps/search/?api=1&query=Kimpton%20Tsim%20Sha%20Tsui%20Hong%20Kong" target="_blank" rel="noopener">Google 地圖看實景與路線</a></p></div><div class="thumb" style="--tint:#CFC1AA"><svg viewBox="0 0 48 48" aria-hidden="true"><g fill="none" stroke="#403B37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 41V9h24v32M8 41h32M18 15h4M26 15h4M18 22h4M26 22h4M18 29h4M26 29h4M21 41v-6h6v6"/></g></svg></div></div></li>
+<li class="stop"><div class="rail"><span class="num">2</span></div><div class="body"><div class="txt"><p class="time">11:30</p><h3>退房，行李寄放櫃台</h3><p class="desc">晚上搭完巴士再回來拿。</p></div><div class="thumb" style="--tint:#CFC1AA"><svg viewBox="0 0 48 48" aria-hidden="true"><g fill="none" stroke="#403B37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 41V9h24v32M8 41h32M18 15h4M26 15h4M18 22h4M26 22h4M18 29h4M26 29h4M21 41v-6h6v6"/></g></svg></div></div></li>
+<li class="leg"><div class="rail"><span class="bar walk" style="--c:#9C948A"></span></div><p><span class="mode" style="--c:#9C948A">步行</span>經地下通道走到尖沙咀站<span class="mins">5 分</span></p></li>
+<li class="leg"><div class="rail"><span class="bar" style="--c:#BF8984"></span></div><p><span class="mode" style="--c:#BF8984">荃灣綫</span>尖沙咀 → 中環<span class="mins">5 分</span></p></li>
+<li class="leg"><div class="rail"><span class="bar walk" style="--c:#9C948A"></span></div><p><span class="mode" style="--c:#9C948A">步行</span>中環站走到士丹利街<span class="mins">4 分</span></p></li>
+<li class="stop"><div class="rail"><span class="num">3</span></div><div class="body"><div class="txt"><p class="time">12:00</p><h3>陸羽茶室，和 Jenny 午餐</h3><p class="desc">中環士丹利街的老茶樓，裝潢很懷舊。朋友推薦燒鵝，肉類、飯麵都好吃。週六中午人多，建議訂位。</p><div class=chips><span class="chip ">朋友推薦</span><span class="chip book">要訂位</span></div><p class=link><a href="https://www.google.com/maps/search/?api=1&query=Luk%20Yu%20Tea%20House%20Stanley%20Street" target="_blank" rel="noopener">Google 地圖看實景與路線</a></p></div><div class="thumb photo" style="--tint:#CFC1AA"><svg viewBox="0 0 48 48" aria-hidden="true"><g fill="none" stroke="#403B37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 25h34v8a5 5 0 0 1-5 5H12a5 5 0 0 1-5-5zM7 30h34M15 25c0-5 4-8 9-8s9 3 9 8M24 17v-3"/></g></svg><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Dimsum_breakfast_in_Hong_Kong.jpg?width=900" alt="" loading="lazy" onerror="this.remove()"></div></div></li>
+<li class="leg"><div class="rail"><span class="bar walk" style="--c:#9C948A"></span></div><p><span class="mode" style="--c:#9C948A">步行</span>走回中環站<span class="mins">4 分</span></p></li>
+<li class="leg"><div class="rail"><span class="bar" style="--c:#BF8984"></span></div><p><span class="mode" style="--c:#BF8984">荃灣綫</span>中環 → 佐敦，經金鐘、尖沙咀，不用換車<span class="mins">8 分</span></p></li>
+<li class="leg"><div class="rail"><span class="bar walk" style="--c:#9C948A"></span></div><p><span class="mode" style="--c:#9C948A">步行</span>佐敦站走到白加士街<span class="mins">3 分</span></p></li>
+<li class="stop friend"><div class="rail"><span class="num">4</span></div><div class="body"><div class="txt"><p class="time">14:15</p><h3>澳洲牛奶公司</h3><p class="desc">招牌炒蛋多士和燉奶。排隊快、翻桌快，週四公休。</p><div class=chips><span class="chip friend">和朋友一起</span><span class="chip ">茶餐廳</span></div><p class=link><a href="https://www.google.com/maps/search/?api=1&query=Australia%20Dairy%20Company%20Parkes%20Street" target="_blank" rel="noopener">Google 地圖看實景與路線</a></p></div><div class="thumb" style="--tint:#CFC1AA" data-wiki="zh:澳洲牛奶公司|en:Australia Dairy Company"><svg viewBox="0 0 48 48" aria-hidden="true"><g fill="none" stroke="#403B37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 18h22v12a9 9 0 0 1-9 9h-4a9 9 0 0 1-9-9zM33 21h3a4.5 4.5 0 0 1 0 9h-3M17 7c-2 3 2 4 0 7M24 7c-2 3 2 4 0 7"/></g></svg></div></div></li>
+<li class="leg"><div class="rail"><span class="bar walk" style="--c:#9C948A"></span></div><p><span class="mode" style="--c:#9C948A">步行</span>沿白加士街走過去<span class="mins">3 分</span></p></li>
+<li class="stop friend"><div class="rail"><span class="num">5</span></div><div class="body"><div class="txt"><p class="time">15:00</p><h3>佳佳甜品</h3><p class="desc">朋友推薦芝麻糊拼核桃露、白果薏米腐竹、冰花燉雞蛋。</p><div class=chips><span class="chip friend">和朋友一起</span><span class="chip ">朋友推薦</span></div><p class=link><a href="https://www.google.com/maps/search/?api=1&query=%E4%BD%B3%E4%BD%B3%E7%94%9C%E5%93%81%20%E4%BD%90%E6%95%A6%20%E7%99%BD%E5%8A%A0%E5%A3%AB%E8%A1%97" target="_blank" rel="noopener">Google 地圖看實景與路線</a></p></div><div class="thumb" style="--tint:#C9A7A2" data-wiki="zh:芝麻糊|en:Black sesame soup"><svg viewBox="0 0 48 48" aria-hidden="true"><g fill="none" stroke="#403B37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 24h34a17 17 0 0 1-34 0zM28 7l9 16M33 6l7 16M17 41h14"/></g></svg></div></div></li>
+<li class="leg"><div class="rail"><span class="bar walk" style="--c:#9C948A"></span></div><p><span class="mode" style="--c:#9C948A">步行</span>走到廟街，再往北到果欄<span class="mins">12 分</span></p></li>
+<li class="stop friend"><div class="rail"><span class="num">6</span></div><div class="body"><div class="txt"><p class="time">15:45</p><h3>油麻地散步：廟街、果欄</h3><p class="desc">廟街攤位傍晚才陸續開，下午主要看街景。果欄是 1913 年的老建築。</p><div class=chips><span class="chip friend">和朋友一起</span></div><p class=link><a href="https://www.google.com/maps/search/?api=1&query=Yau%20Ma%20Tei%20Fruit%20Market" target="_blank" rel="noopener">Google 地圖看實景與路線</a></p></div><div class="thumb" style="--tint:#A3B09B" data-wiki="zh:油麻地果欄|en:Yau Ma Tei Fruit Market"><svg viewBox="0 0 48 48" aria-hidden="true"><g fill="none" stroke="#403B37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18l4-9h26l4 9zM7 18c0 3 4 3 4 0 0 3 5 3 5 0 0 3 5 3 5 0 0 3 6 3 6 0 0 3 5 3 5 0 0 3 5 3 5 0 0 3 4 3 4 0M10 21v19h28V21M20 40v-9h8v9"/></g></svg></div></div></li>
+<li class="leg"><div class="rail"><span class="bar walk" style="--c:#9C948A"></span></div><p><span class="mode" style="--c:#9C948A">步行</span>走到油麻地站<span class="mins">5 分</span></p></li>
+<li class="leg"><div class="rail"><span class="bar" style="--c:#BF8984"></span></div><p><span class="mode" style="--c:#BF8984">荃灣綫</span>油麻地 → 尖沙咀，搭往中環方向的荃灣綫<span class="mins">4 分</span></p></li>
+<li class="leg"><div class="rail"><span class="bar walk" style="--c:#9C948A"></span></div><p><span class="mode" style="--c:#9C948A">步行</span>尖沙咀站走到漢口道<span class="mins">3 分</span></p></li>
+<li class="stop friend"><div class="rail"><span class="num">7</span></div><div class="body"><div class="txt"><p class="time">16:45</p><h3>Bakehouse 尖沙咀店</h3><p class="desc">漢口道，只能外帶。人氣高，有時晚上 7 點前就賣完，所以先來買。</p><div class=chips><span class="chip friend">和朋友一起</span><span class="chip ">蛋撻</span></div><p class=link><a href="https://www.google.com/maps/search/?api=1&query=Bakehouse%2044%20Hankow%20Road%20Tsim%20Sha%20Tsui" target="_blank" rel="noopener">Google 地圖看實景與路線</a></p></div><div class="thumb" style="--tint:#CFC1AA" data-wiki="zh:蛋撻|en:Egg tart"><svg viewBox="0 0 48 48" aria-hidden="true"><g fill="none" stroke="#403B37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 25h34l-4 11H11zM9 25c3-6 27-6 30 0M14 36l-1-11M20 36v-11M28 36v-11M34 36l1-11"/></g></svg></div></div></li>
+<li class="leg"><div class="rail"><span class="bar walk" style="--c:#9C948A"></span></div><p><span class="mode" style="--c:#9C948A">步行</span>走到金巴利道<span class="mins">6 分</span></p></li>
+<li class="stop friend"><div class="rail"><span class="num">8</span></div><div class="body"><div class="txt"><p class="time">17:15</p><h3>蓮香樓晚餐</h3><p class="desc">金巴利道的推車點心老字號。18:00 起換晚市價，點心一律 HK$48，盡量在 18:00 前點完。</p><div class=chips><span class="chip friend">和朋友一起</span></div><p class=link><a href="https://www.google.com/maps/search/?api=1&query=Lin%20Heung%20Lau%2025%20Kimberley%20Road" target="_blank" rel="noopener">Google 地圖看實景與路線</a></p></div><div class="thumb photo" style="--tint:#CFC1AA"><svg viewBox="0 0 48 48" aria-hidden="true"><g fill="none" stroke="#403B37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 25h34v8a5 5 0 0 1-5 5H12a5 5 0 0 1-5-5zM7 30h34M15 25c0-5 4-8 9-8s9 3 9 8M24 17v-3"/></g></svg><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Dimsum_breakfast_in_Hong_Kong.jpg?width=900" alt="" loading="lazy" onerror="this.remove()"></div></div></li>
+<li class="leg"><div class="rail"><span class="bar walk" style="--c:#9C948A"></span></div><p><span class="mode" style="--c:#9C948A">步行</span>走到星光大道<span class="mins">10 分</span></p></li>
+<li class="stop friend"><div class="rail"><span class="num">9</span></div><div class="body"><div class="txt"><p class="time">18:15</p><h3>夜景巴士報到</h3><p class="desc">星光大道李小龍銅像旁，梳士巴利道旅遊巴士上落客區。要提早 15 分鐘到，遲到不退款。</p><div class=chips><span class="chip friend">和朋友一起</span></div><p class=link><a href="https://www.google.com/maps/search/?api=1&query=Bruce%20Lee%20Statue%20Avenue%20of%20Stars" target="_blank" rel="noopener">Google 地圖看實景與路線</a></p></div><div class="thumb" style="--tint:#AA9AA9" data-wiki="zh:星光大道 (香港)|en:Avenue of Stars, Hong Kong"><svg viewBox="0 0 48 48" aria-hidden="true"><g fill="none" stroke="#403B37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 9h28v26H10zM10 21h28M10 15h28M15 35v4M33 35v4M15 28h2M31 28h2"/></g></svg></div></div></li>
+<li class="leg"><div class="rail"><span class="bar" style="--c:#B095A9"></span></div><p><span class="mode" style="--c:#B095A9">夜景巴士</span>九龍夜遊 18:30 出發：維港、彌敦道、廟街、果欄、西九文化區，回到原地下車<span class="mins">40～60 分</span></p></li>
+<li class="leg"><div class="rail"><span class="bar walk" style="--c:#9C948A"></span></div><p><span class="mode" style="--c:#9C948A">步行</span>走回飯店<span class="mins">5 分</span></p></li>
+<li class="stop"><div class="rail"><span class="num">10</span></div><div class="body"><div class="txt"><p class="time">19:35</p><h3>回 Kimpton 拿行李</h3><p class="desc">和朋友在這裡分開。</p></div><div class="thumb" style="--tint:#CFC1AA"><svg viewBox="0 0 48 48" aria-hidden="true"><g fill="none" stroke="#403B37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 41V9h24v32M8 41h32M18 15h4M26 15h4M18 22h4M26 22h4M18 29h4M26 29h4M21 41v-6h6v6"/></g></svg></div></div></li>
+<li class="leg"><div class="rail"><span class="bar walk" style="--c:#9C948A"></span></div><p><span class="mode" style="--c:#9C948A">步行</span>走到尖東站<span class="mins">3 分</span></p></li>
+<li class="leg"><div class="rail"><span class="bar" style="--c:#A58B7B"></span></div><p><span class="mode" style="--c:#A58B7B">屯馬綫</span>尖東 → 柯士甸，坐 1 站<span class="mins">2 分</span></p></li>
+<li class="leg"><div class="rail"><span class="bar walk" style="--c:#9C948A"></span></div><p><span class="mode" style="--c:#9C948A">步行</span>柯士甸站出站，走到九龍站，帶行李預留時間<span class="tnote">站外轉乘</span><span class="mins">8 分</span></p></li>
+<li class="leg"><div class="rail"><span class="bar" style="--c:#83A39F"></span></div><p><span class="mode" style="--c:#83A39F">機場快綫</span>九龍 → 機場，約每 10 分鐘一班<span class="mins">22 分</span></p></li>
+<li class="stop"><div class="rail"><span class="num">11</span></div><div class="body"><div class="txt"><p class="time">約 20:30</p><h3>抵達機場</h3><p class="desc">辦登機、逛免稅店。奇華餅家在禁區有店，雞蛋捲比蛋撻耐放，適合當伴手禮。</p><p class=link><a href="https://www.google.com/maps/search/?api=1&query=Hong%20Kong%20International%20Airport%20Terminal%201" target="_blank" rel="noopener">Google 地圖看實景與路線</a></p></div><div class="thumb" style="--tint:#93A2B1" data-wiki="zh:香港國際機場|en:Hong Kong International Airport"><svg viewBox="0 0 48 48" aria-hidden="true"><g fill="none" stroke="#403B37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 28l14-4 8-14c1-2 4-2 4 1l-3 12 12-3 3-5h3l-2 9 2 9h-3l-3-5-12-3 3 12c0 3-3 3-4 1l-8-14-14-4z"/></g></svg></div></div></li>
+<li class="stop"><div class="rail"><span class="num">12</span></div><div class="body"><div class="txt"><p class="time">23:25</p><h3>起飛</h3></div><div class="thumb" style="--tint:#93A2B1"><svg viewBox="0 0 48 48" aria-hidden="true"><g fill="none" stroke="#403B37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 28l14-4 8-14c1-2 4-2 4 1l-3 12 12-3 3-5h3l-2 9 2 9h-3l-3-5-12-3 3 12c0 3-3 3-4 1l-8-14-14-4z"/></g></svg></div></div></li></ol>
+  </section>
+
+  <section class="notes">
+    <h2>轉乘確認</h2>
+    <div class="checks">
+      <div><b><i>直達</i>博覽館 → 九龍（機場快綫）</b><span>途經機場、青衣，中途不用下車。博覽館到機場約 2 分鐘，機場到九龍約 22 分鐘。</span></div>
+      <div><b><i class="warn">站外</i>九龍站 ↔ 柯士甸站</b><span>兩站沒有站內通道，要出站走約 500 公尺，帶行李抓 8～10 分鐘。機場快綫和屯馬綫分開計費。</span></div>
+      <div><b><i>直達</i>尖沙咀 → 中環（荃灣綫）</b><span>經金鐘，不用換車。尖東站和尖沙咀站之間有地下通道相連。</span></div>
+      <div><b><i>直達</i>中環 → 銅鑼灣（港島綫）</b><span>中環站同時有荃灣綫和港島綫，經金鐘、灣仔，不用換車。</span></div>
+      <div><b><i>直達</i>中環 → 佐敦（荃灣綫）</b><span>經金鐘、尖沙咀，不用換車。</span></div>
+      <div><b><i class="warn">注意</i>油麻地 → 尖沙咀</b><span>油麻地站同時有荃灣綫和觀塘綫，要搭往「中環」方向的荃灣綫，觀塘綫不會到尖沙咀。</span></div>
+      <div><b><i class="warn">非港鐵</i>山頂纜車</b><span>總站在花園道，從中環站走過去約 10 分鐘，八達通可以直接感應。</span></div>
+    </div>
+  </section>
+
+  <section class="notes">
+    <h2>出發前要做的事</h2>
+    <ul class="checklist">
+      <li>訂位：鵝頸橋四季火鍋 10/9 20:10、陸羽茶室 10/10 12:00</li>
+      <li>山頂纜車先在網上買票，週五下午排隊人多</li>
+      <li>準備八達通，或直接用手機感應信用卡搭港鐵和機場快綫</li>
+      <li>夜景巴士 18:15 前到李小龍銅像旁報到，遲到不退款</li>
+      <li>和朋友約好會合點：10/9 21:30 蘭桂坊、10/10 14:15 澳洲牛奶公司</li>
+      <li>10 月還在颱風季，出發前看一下香港天文台預報</li>
+    </ul>
+  </section>
+
+  <section class="notes">
+    <h2>朋友推薦但這次沒排到</h2>
+    <div class="pocket">
+      <div><b>新香園（堅記）</b><span>深水埗，招牌蛋牛治。兩天早餐都吃飯店，所以沒排。</span></div>
+      <div><b>女人街食飯公司</b><span>旺角，17:30 才開門，和夜景巴士時間衝突。</span></div>
+      <div><b>倫敦大酒樓</b><span>旺角推車點心，已經有陸羽和蓮香樓兩餐點心。</span></div>
+      <div><b>正九清湯腩</b><span>油麻地、北角都有分店，這次餐數排不下。</span></div>
+      <div><b>陳記燒臘飯店</b><span>油麻地，營業到凌晨 5 點，下次可以當宵夜。</span></div>
+      <div><b>Soft Thunder</b><span>灣仔和堅尼地城，都不順路。</span></div>
+    </div>
+  </section>
+
+  <footer>
+    <p>照片來源：Wikimedia Commons 與維基百科，開啟網頁時自動載入。地圖：© OpenStreetMap 貢獻者、CARTO。</p>
+    <p>步行和車程時間為估算，實際依人潮與班次而定。</p>
+  </footer>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+(function(){
+  if (typeof L === 'undefined') return;
+  var MODES = {"tw": ["荃灣綫", "#BF8984"], "island": ["港島綫", "#8399AE"], "tml": ["屯馬綫", "#A58B7B"], "ae": ["機場快綫", "#83A39F"], "tram": ["山頂纜車", "#97AA8B"], "bus": ["夜景巴士", "#B095A9"], "walk": ["步行", "#9C948A"]}, DATA = {"d1": {"legs": [{"m": "walk", "path": [[22.31931, 113.94359], [22.32083, 113.94184]], "mins": 5}, {"m": "ae", "path": [[22.32083, 113.94184], [22.31587, 113.93656], [22.3075, 113.947], [22.2975, 113.9585], [22.299, 113.985], [22.315, 114.01], [22.3321, 114.02885], [22.344, 114.056], [22.3525, 114.0745], [22.356, 114.09], [22.3585, 114.10767], [22.347, 114.127], [22.337, 114.144], [22.32678, 114.15368], [22.31784, 114.16014], [22.30431, 114.16148]], "mins": 26}, {"m": "walk", "path": [[22.30431, 114.16148], [22.3048, 114.164], [22.30529, 114.1661]], "mins": 8}, {"m": "tml", "path": [[22.30529, 114.1661], [22.29482, 114.17343]], "mins": 2}, {"m": "walk", "path": [[22.29482, 114.17343], [22.29576, 114.17373]], "mins": 3}, {"m": "walk", "path": [[22.29576, 114.17373], [22.29849, 114.17193]], "mins": 5}, {"m": "tw", "path": [[22.29849, 114.17193], [22.27941, 114.16456], [22.28187, 114.15865]], "mins": 5}, {"m": "walk", "path": [[22.28187, 114.15865], [22.28298, 114.15443]], "mins": 6}, {"m": "walk", "path": [[22.28298, 114.15443], [22.28256, 114.15395]], "mins": null}, {"m": "walk", "path": [[22.28256, 114.15395], [22.2834, 114.1531], [22.28188, 114.15313]], "mins": 3}, {"m": "walk", "path": [[22.28188, 114.15313], [22.28178, 114.15449]], "mins": 4}, {"m": "walk", "path": [[22.28178, 114.15449], [22.2805, 114.156], [22.279, 114.1575], [22.27768, 114.15919]], "mins": 12}, {"m": "tram", "path": [[22.27768, 114.15919], [22.2768, 114.1572], [22.2752, 114.1543], [22.273, 114.1515], [22.27124, 114.14996]], "mins": 7}, {"m": "tram", "path": [[22.27124, 114.14996], [22.273, 114.1515], [22.2752, 114.1543], [22.2768, 114.1572], [22.27768, 114.15919]], "mins": 7}, {"m": "walk", "path": [[22.27768, 114.15919], [22.279, 114.158], [22.28187, 114.15865]], "mins": 10}, {"m": "island", "path": [[22.28187, 114.15865], [22.27941, 114.16456], [22.27773, 114.1732], [22.28037, 114.18504]], "mins": 7}, {"m": "walk", "path": [[22.28037, 114.18504], [22.27786, 114.18221]], "mins": 5}, {"m": "walk", "path": [[22.27786, 114.18221], [22.2788, 114.1853]], "mins": 5}, {"m": "walk", "path": [[22.2788, 114.1853], [22.28021, 114.18071]], "mins": 7}, {"m": "walk", "path": [[22.28021, 114.18071], [22.28037, 114.18504]], "mins": 5}, {"m": "island", "path": [[22.28037, 114.18504], [22.27773, 114.1732], [22.27941, 114.16456], [22.28187, 114.15865]], "mins": 7}, {"m": "walk", "path": [[22.28187, 114.15865], [22.2809, 114.1555]], "mins": 5}, {"m": "walk", "path": [[22.2809, 114.1555], [22.28187, 114.15865]], "mins": 5}, {"m": "tw", "path": [[22.28187, 114.15865], [22.27941, 114.16456], [22.29849, 114.17193]], "mins": 5}, {"m": "walk", "path": [[22.29849, 114.17193], [22.29576, 114.17373]], "mins": 5}], "pins": [{"n": 1, "ll": [22.31931, 113.94359], "f": false, "t": "落地，入住機場萬豪", "time": "02:00"}, {"n": 3, "ll": [22.29576, 114.17373], "f": false, "t": "Kimpton 尖沙咀，寄放行李", "time": "12:45"}, {"n": 4, "ll": [22.28298, 114.15443], "f": false, "t": "沾仔記", "time": "13:15"}, {"n": 6, "ll": [22.28256, 114.15395], "f": false, "t": "蘭芳園", "time": "15:15"}, {"n": 7, "ll": [22.28188, 114.15313], "f": false, "t": "嘉咸街壁畫，士丹頓街買麵包", "time": "15:45"}, {"n": 8, "ll": [22.28178, 114.15449], "f": false, "t": "大館", "time": "16:05"}, {"n": 9, "ll": [22.27124, 114.14996], "f": false, "t": "杜莎夫人蠟像館", "time": "17:00"}, {"n": 11, "ll": [22.27786, 114.18221], "f": false, "t": "Brandy Melville 銅鑼灣店", "time": "19:15"}, {"n": 12, "ll": [22.2788, 114.1853], "f": false, "t": "白沙道", "time": "19:50"}, {"n": 13, "ll": [22.28021, 114.18071], "f": false, "t": "鵝頸橋四季火鍋", "time": "20:10"}, {"n": 14, "ll": [22.2809, 114.1555], "f": true, "t": "蘭桂坊", "time": "21:30"}], "city": [[22.27, 114.148], [22.307, 114.188]], "zones": [["全日", null], ["中環", [[22.2768, 114.1518], [22.285, 114.16]]], ["太平山", [[22.27, 114.148], [22.28, 114.161]]], ["銅鑼灣", [[22.2765, 114.179], [22.2815, 114.187]]], ["含機場", "all"]]}, "d2": {"legs": [{"m": "walk", "path": [[22.29576, 114.17373], [22.29849, 114.17193]], "mins": 5}, {"m": "tw", "path": [[22.29849, 114.17193], [22.27941, 114.16456], [22.28187, 114.15865]], "mins": 5}, {"m": "walk", "path": [[22.28187, 114.15865], [22.28221, 114.15556]], "mins": 4}, {"m": "walk", "path": [[22.28221, 114.15556], [22.28187, 114.15865]], "mins": 4}, {"m": "tw", "path": [[22.28187, 114.15865], [22.27941, 114.16456], [22.29849, 114.17193], [22.30479, 114.17166]], "mins": 8}, {"m": "walk", "path": [[22.30479, 114.17166], [22.30463, 114.17054]], "mins": 3}, {"m": "walk", "path": [[22.30463, 114.17054], [22.30663, 114.17085]], "mins": 3}, {"m": "walk", "path": [[22.30663, 114.17085], [22.308, 114.1702], [22.3135, 114.168]], "mins": 12}, {"m": "walk", "path": [[22.3135, 114.168], [22.31283, 114.17068]], "mins": 5}, {"m": "tw", "path": [[22.31283, 114.17068], [22.30479, 114.17166], [22.29849, 114.17193]], "mins": 4}, {"m": "walk", "path": [[22.29849, 114.17193], [22.2972, 114.1712]], "mins": 3}, {"m": "walk", "path": [[22.2972, 114.1712], [22.30092, 114.17317]], "mins": 6}, {"m": "walk", "path": [[22.30092, 114.17317], [22.2975, 114.1745], [22.29574, 114.17628]], "mins": 10}, {"m": "bus", "path": [[22.29574, 114.17628], [22.2952, 114.172], [22.3, 114.1718], [22.305, 114.1715], [22.308, 114.1702], [22.312, 114.1697], [22.3135, 114.168], [22.311, 114.165], [22.305, 114.162], [22.3016, 114.1597], [22.301, 114.1556], [22.3035, 114.165], [22.299, 114.169], [22.295, 114.1725], [22.29574, 114.17628]], "mins": "40～60"}, {"m": "walk", "path": [[22.29574, 114.17628], [22.29576, 114.17373]], "mins": 5}, {"m": "walk", "path": [[22.29576, 114.17373], [22.29482, 114.17343]], "mins": 3}, {"m": "tml", "path": [[22.29482, 114.17343], [22.30529, 114.1661]], "mins": 2}, {"m": "walk", "path": [[22.30529, 114.1661], [22.3048, 114.164], [22.30431, 114.16148]], "mins": 8}, {"m": "ae", "path": [[22.30431, 114.16148], [22.31784, 114.16014], [22.32678, 114.15368], [22.337, 114.144], [22.347, 114.127], [22.3585, 114.10767], [22.356, 114.09], [22.3525, 114.0745], [22.344, 114.056], [22.3321, 114.02885], [22.315, 114.01], [22.299, 113.985], [22.2975, 113.9585], [22.3075, 113.947], [22.31587, 113.93656]], "mins": 22}], "pins": [{"n": 1, "ll": [22.29576, 114.17373], "f": false, "t": "飯店早餐", "time": "早上"}, {"n": 3, "ll": [22.28221, 114.15556], "f": false, "t": "陸羽茶室，和 Jenny 午餐", "time": "12:00"}, {"n": 4, "ll": [22.30463, 114.17054], "f": true, "t": "澳洲牛奶公司", "time": "14:15"}, {"n": 5, "ll": [22.30663, 114.17085], "f": true, "t": "佳佳甜品", "time": "15:00"}, {"n": 6, "ll": [22.3135, 114.168], "f": true, "t": "油麻地散步：廟街、果欄", "time": "15:45"}, {"n": 7, "ll": [22.2972, 114.1712], "f": true, "t": "Bakehouse 尖沙咀店", "time": "16:45"}, {"n": 8, "ll": [22.30092, 114.17317], "f": true, "t": "蓮香樓晚餐", "time": "17:15"}, {"n": 9, "ll": [22.29574, 114.17628], "f": true, "t": "夜景巴士報到", "time": "18:15"}, {"n": 11, "ll": [22.31587, 113.93656], "f": false, "t": "抵達機場", "time": "約 20:30"}], "city": [[22.279, 114.153], [22.315, 114.179]], "zones": [["全日", null], ["中環", [[22.28, 114.154], [22.284, 114.16]]], ["佐敦油麻地", [[22.2955, 114.165], [22.3145, 114.1775]]], ["含機場", "all"]]}}, BASE = [["ae", [[22.32083, 113.94184], [22.31587, 113.93656], [22.3075, 113.947], [22.2975, 113.9585], [22.299, 113.985], [22.315, 114.01], [22.3321, 114.02885], [22.344, 114.056], [22.3525, 114.0745], [22.356, 114.09], [22.3585, 114.10767], [22.347, 114.127], [22.337, 114.144], [22.32678, 114.15368], [22.31784, 114.16014], [22.30431, 114.16148], [22.2955, 114.16], [22.28468, 114.15818]]], ["tw", [[22.28187, 114.15865], [22.27941, 114.16456], [22.29849, 114.17193], [22.30479, 114.17166], [22.31283, 114.17068], [22.3193, 114.1694]]], ["island", [[22.2866, 114.152], [22.28187, 114.15865], [22.27941, 114.16456], [22.27773, 114.1732], [22.28037, 114.18504], [22.2824, 114.1918]]], ["tml", [[22.32678, 114.15368], [22.30529, 114.1661], [22.29482, 114.17343], [22.3029, 114.1817]]], ["tram", [[22.27768, 114.15919], [22.2768, 114.1572], [22.2752, 114.1543], [22.273, 114.1515], [22.27124, 114.14996]]]], STATIONS = [["博覽館", [22.32083, 113.94184], "top", false], ["機場", [22.31587, 113.93656], "left", false], ["青衣", [22.3585, 114.10767], "top", false], ["九龍", [22.30431, 114.16148], "left", true], ["香港", [22.28468, 114.15818], "left", false], ["柯士甸", [22.30529, 114.1661], "top", true], ["尖東", [22.29482, 114.17343], "bottom", true], ["尖沙咀", [22.29849, 114.17193], "left", true], ["佐敦", [22.30479, 114.17166], "right", false], ["油麻地", [22.31283, 114.17068], "right", false], ["金鐘", [22.27941, 114.16456], "bottom", false], ["中環", [22.28187, 114.15865], "top", true], ["灣仔", [22.27773, 114.1732], "bottom", false], ["銅鑼灣", [22.28037, 114.18504], "top", false], ["花園道纜車站", [22.27768, 114.15919], "right", false], ["山頂", [22.27124, 114.14996], "left", false]];
+  function mid(path){
+    var d=[0];for(var i=1;i<path.length;i++){var a=path[i-1],b=path[i];d.push(d[i-1]+Math.hypot(a[0]-b[0],(a[1]-b[1])*0.925));}
+    var half=d[d.length-1]/2;for(var j=1;j<d.length;j++){if(d[j]>=half){var t=(half-d[j-1])/((d[j]-d[j-1])||1);var a=path[j-1],b=path[j];return [a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t];}}
+    return path[0];
+  }
+  var maps = {};
+  Object.keys(DATA).forEach(function(day){
+    var el = document.getElementById('map-'+day); if(!el) return;
+    var fail = el.querySelector('.mapfail'); if (fail) fail.remove();
+    var map = L.map(el,{scrollWheelZoom:false,zoomSnap:0.25,tap:true});
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{maxZoom:19,subdomains:'abcd',
+      attribution:'&copy; OpenStreetMap &copy; CARTO'}).addTo(map);
+    BASE.forEach(function(b){L.polyline(b[1],{color:MODES[b[0]][1],weight:4,opacity:.38,lineCap:'round',lineJoin:'round'}).addTo(map);});
+    var walkLabels = L.layerGroup(), allPts=[];
+    DATA[day].legs.forEach(function(l){
+      var col = MODES[l.m][1], st;
+      if (l.m==='walk') st={color:col,weight:4,dashArray:'1 8',lineCap:'round',opacity:.95};
+      else if (l.m==='bus') st={color:col,weight:5,dashArray:'10 7',opacity:.95};
+      else { L.polyline(l.path,{color:'#fff',weight:11,opacity:.85,lineCap:'round',lineJoin:'round'}).addTo(map);
+             st={color:col,weight:7,opacity:1,lineCap:'round',lineJoin:'round'}; }
+      L.polyline(l.path,st).bindTooltip(MODES[l.m][0]+(l.mins?' '+l.mins+' 分':''),{sticky:true}).addTo(map);
+      allPts = allPts.concat(l.path);
+      if (l.mins){
+        var tip = L.tooltip({permanent:true,direction:'center',className:'dur',interactive:false})
+          .setLatLng(mid(l.path)).setContent(l.mins+' 分');
+        tip.on('add',function(){var e=tip.getElement(); if(e) e.style.setProperty('--c',col);});
+        if (l.m==='walk') walkLabels.addLayer(tip); else tip.addTo(map);
+      }
+    });
+    STATIONS.forEach(function(s){
+      L.circleMarker(s[1],{radius:s[3]?7:5,color:'#403B37',weight:s[3]?3:2,fillColor:'#fff',fillOpacity:1})
+        .bindTooltip(s[0]+'站',{permanent:true,direction:s[2],className:'stn',offset:s[2]==='left'?[-6,0]:s[2]==='right'?[6,0]:s[2]==='top'?[0,-6]:[0,6]}).addTo(map);
+    });
+    DATA[day].pins.forEach(function(p){
+      var label = String(p.n), wide = label.length>2;
+      var icon = L.divIcon({className:'',html:'<div class="mpin'+(p.f?' f':'')+(wide?' wide':'')+'">'+label+'</div>',iconSize:wide?[44,28]:[28,28],iconAnchor:wide?[22,14]:[14,14]});
+      L.marker(p.ll,{icon:icon,title:p.t,zIndexOffset:1000}).bindPopup('<b>'+p.t+'</b><br>'+p.time).addTo(map);
+    });
+    function syncWalk(){ if (map.getZoom()>=15) walkLabels.addTo(map); else map.removeLayer(walkLabels); }
+    map.on('zoomend',syncWalk);
+    map.fitBounds(DATA[day].city,{padding:[12,12]}); syncWalk();
+    maps[day] = {map:map, pts:allPts};
+  });
+  document.querySelectorAll('.zones button').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var d=btn.dataset.map, z=DATA[d].zones[+btn.dataset.zone][1], m=maps[d]; if(!m) return;
+      document.querySelectorAll('.zones button[data-map="'+d+'"]').forEach(function(b){b.setAttribute('aria-pressed',String(b===btn));});
+      if (z===null) m.map.fitBounds(DATA[d].city,{padding:[12,12]});
+      else if (z==='all') m.map.fitBounds(m.pts,{padding:[16,16]});
+      else m.map.fitBounds(z,{padding:[8,8]});
+    });
+  });
+})();
+(function(){
+  if (!window.fetch) return;
+  document.querySelectorAll('[data-wiki]').forEach(function(el){
+    var cands = el.getAttribute('data-wiki').split('|');
+    (function next(i){
+      if (i>=cands.length) return;
+      var k=cands[i].indexOf(':'), lang=cands[i].slice(0,k), title=cands[i].slice(k+1);
+      fetch('https://'+lang+'.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent(title))
+        .then(function(r){return r.ok?r.json():null;})
+        .then(function(j){
+          var src = j && ((j.thumbnail&&j.thumbnail.source)||(j.originalimage&&j.originalimage.source));
+          if (!src) return next(i+1);
+          var img = new Image(), big = src.replace(/\/(\d+)px-/,'/480px-'), tried=false;
+          img.alt=''; img.onload=function(){el.classList.add('photo');};
+          img.onerror=function(){ if(!tried && big!==src){tried=true; img.src=src;} else {img.remove(); next(i+1);} };
+          img.src = big; el.appendChild(img);
+        }).catch(function(){ next(i+1); });
+    })(0);
+  });
+})();
+</script>
+</body>
+</html>
